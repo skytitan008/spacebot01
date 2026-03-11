@@ -537,7 +537,7 @@ bind = "127.0.0.1"
         let parsed: TomlConfig = toml::from_str(toml).expect("failed to parse test TOML");
         let config = Config::from_toml(parsed, PathBuf::from(".")).expect("failed to build Config");
 
-        assert_eq!(config.api.bind, "[::]");
+        assert_eq!(config.api.bind, "0.0.0.0");
     }
 
     #[test]
@@ -552,7 +552,7 @@ bind = "127.0.0.1"
         let config = Config::load_from_env(&Config::default_instance_dir())
             .expect("failed to load config from env");
 
-        assert_eq!(config.api.bind, "[::]");
+        assert_eq!(config.api.bind, "0.0.0.0");
     }
 
     /// Helper to build a minimal `SlackConfig` for permission tests.
