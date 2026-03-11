@@ -521,8 +521,14 @@ fn cmd_auth(config_path: Option<std::path::PathBuf>, auth_cmd: AuthCommand) -> a
                         } else {
                             eprintln!("Anthropic OAuth: valid (expires in {}m)", expires_min);
                         }
-                        eprintln!("  access token: {}...", &creds.access_token[..20]);
-                        eprintln!("  refresh token: {}...", &creds.refresh_token[..20]);
+                        eprintln!(
+                            "  access token: {}...",
+                            &creds.access_token[..creds.access_token.floor_char_boundary(20)]
+                        );
+                        eprintln!(
+                            "  refresh token: {}...",
+                            &creds.refresh_token[..creds.refresh_token.floor_char_boundary(20)]
+                        );
                         eprintln!(
                             "  credentials file: {}",
                             spacebot::auth::credentials_path(&instance_dir).display()

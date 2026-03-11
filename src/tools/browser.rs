@@ -530,7 +530,7 @@ fn render_snapshot_node(node: &SnapshotNode, depth: usize, output: &mut String) 
         output.push_str(" \"");
         // Truncate very long names for context efficiency.
         let display_name = if node.name.len() > 200 {
-            format!("{}...", &node.name[..200])
+            format!("{}...", &node.name[..node.name.floor_char_boundary(200)])
         } else {
             node.name.clone()
         };
@@ -575,7 +575,7 @@ fn render_snapshot_node(node: &SnapshotNode, depth: usize, output: &mut String) 
     // Value (e.g., text input current value)
     if let Some(ref value) = node.value {
         let display_value = if value.len() > 100 {
-            format!("{}...", &value[..100])
+            format!("{}...", &value[..value.floor_char_boundary(100)])
         } else {
             value.clone()
         };
@@ -1589,7 +1589,7 @@ impl Tool for BrowserTypeTool {
             )
         } else {
             let display_text = if text_value.len() > 50 {
-                format!("{}...", &text_value[..50])
+                format!("{}...", &text_value[..text_value.floor_char_boundary(50)])
             } else {
                 text_value
             };
