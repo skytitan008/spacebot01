@@ -489,8 +489,12 @@ impl Messaging for MattermostAdapter {
                                 msg = read.next() => {
                                     match msg {
                                         Some(Ok(WsMessage::Text(text))) => {
-                                            if let Ok(event) = serde_json::from_str::<MattermostWsEvent>(&text) {
-                                                if event.event == "posted" {
+                                            match serde_json::from_str::<MattermostWsEvent>(&text) {
+                                            Err(error) => {
+                                                tracing::debug!(%error, text = text.as_str(), "failed to parse Mattermost WS event envelope");
+                                            }
+                                            Ok(event) => {
+                                            if event.event == "posted" {
                                                     // The post is double-encoded as a JSON string in the data field.
                                                     let post_result = event
                                                         .data
@@ -553,7 +557,8 @@ impl Messaging for MattermostAdapter {
                                                         }
                                                     }
                                                 }
-                                            }
+                                            } // close Ok(event) arm
+                                            } // close match MattermostWsEvent
                                         }
                                         Some(Ok(WsMessage::Ping(data))) => {
                                             if write.send(WsMessage::Pong(data)).await.is_err() {
@@ -999,7 +1004,7 @@ impl Messaging for MattermostAdapter {
                     .context("failed to parse file upload response")?;
                 let file_ids: Vec<_> =
                     upload.file_infos.iter().map(|f| f.id.as_str()).collect();
-                self.client
+                let post_response = self.client
                     .post(self.api_url("/posts"))
                     .bearer_auth(self.token.as_ref())
                     .json(&serde_json::json!({
@@ -1010,6 +1015,14 @@ impl Messaging for MattermostAdapter {
                     .send()
                     .await
                     .context("failed to create post with file")?;
+                let post_status = post_response.status();
+                if !post_status.is_success() {
+                    let body = post_response.text().await.unwrap_or_default();
+                    return Err(anyhow::anyhow!(
+                        "mattermost create post with file failed with status {}: {body}",
+                        post_status.as_u16()
+                    ).into());
+                }
             }
             other => {
                 tracing::debug!(?other, "mattermost broadcast does not support this response type");
@@ -1515,6 +1528,18 @@ mod tests {
         let perms = MattermostPermissions { team_filter: None, channel_filter: cf, dm_allowed_users: vec![] };
         // No team_id → can't look up allowed channels → reject
         assert!(bmfp(&p, "bot", None, &perms).is_none());
+    }
+
+    #[test]
+    fn channel_filter_fail_closed_when_team_not_in_filter() {
+        // channel_filter has an entry for team1 but the message comes from team2.
+        // Even though chan1 is the allowed channel, the missing team2 entry must
+        // reject (fail-closed), not silently pass through.
+        let p = post("user1", "chan1", None);
+        let mut cf = HashMap::new();
+        cf.insert("team1".into(), vec!["chan1".into()]);
+        let perms = MattermostPermissions { team_filter: None, channel_filter: cf, dm_allowed_users: vec![] };
+        assert!(bmfp(&p, "bot", Some("team2"), &perms).is_none());
     }
 
     fn dm_perms(allowed: &[&str]) -> MattermostPermissions {
