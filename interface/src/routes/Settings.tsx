@@ -417,10 +417,6 @@ export function Settings() {
 				setTestResult({ success: false, message: "Base URL must contain '.openai.azure.com' (e.g., https://{resource-name}.openai.azure.com)" });
 				return false;
 			}
-			if (!keyInput.trim()) {
-				setTestResult({ success: false, message: "API key is required for Azure" });
-				return false;
-			}
 		}
 
 		setMessage(null);
