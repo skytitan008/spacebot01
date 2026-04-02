@@ -487,6 +487,8 @@ impl Config {
                     name: None,
                     use_bearer_auth: anthropic_from_auth_token,
                     extra_headers: vec![],
+                    api_version: None,
+                    deployment: None,
                 });
         }
 
@@ -500,6 +502,8 @@ impl Config {
                     name: None,
                     use_bearer_auth: false,
                     extra_headers: openrouter_extra_headers(),
+                    api_version: None,
+                    deployment: None,
                 });
         }
 
@@ -571,6 +575,8 @@ impl Config {
                     name: None,
                     use_bearer_auth: false,
                     extra_headers: vec![],
+                    api_version: None,
+                    deployment: None,
                 });
         }
 
@@ -584,6 +590,8 @@ impl Config {
                     name: None,
                     use_bearer_auth: false,
                     extra_headers: vec![],
+                    api_version: None,
+                    deployment: None,
                 });
         }
 
@@ -597,6 +605,8 @@ impl Config {
                     name: None,
                     use_bearer_auth: false,
                     extra_headers: vec![],
+                    api_version: None,
+                    deployment: None,
                 });
         }
 
@@ -610,6 +620,8 @@ impl Config {
                     name: None,
                     use_bearer_auth: false,
                     extra_headers: openrouter_extra_headers(),
+                    api_version: None,
+                    deployment: None,
                 });
         }
 
@@ -651,6 +663,8 @@ impl Config {
                     name: None,
                     use_bearer_auth: false,
                     extra_headers: vec![],
+                    api_version: None,
+                    deployment: None,
                 });
         }
 
@@ -664,6 +678,8 @@ impl Config {
                     name: None,
                     use_bearer_auth: false,
                     extra_headers: vec![],
+                    api_version: None,
+                    deployment: None,
                 });
         }
 
@@ -677,6 +693,8 @@ impl Config {
                     name: None,
                     use_bearer_auth: false,
                     extra_headers: vec![],
+                    api_version: None,
+                    deployment: None,
                 });
         }
 
@@ -690,6 +708,8 @@ impl Config {
                     name: None,
                     use_bearer_auth: false,
                     extra_headers: vec![],
+                    api_version: None,
+                    deployment: None,
                 });
         }
 
@@ -703,6 +723,8 @@ impl Config {
                     name: None,
                     use_bearer_auth: false,
                     extra_headers: vec![],
+                    api_version: None,
+                    deployment: None,
                 });
         }
 
@@ -716,6 +738,8 @@ impl Config {
                     name: None,
                     use_bearer_auth: false,
                     extra_headers: vec![],
+                    api_version: None,
+                    deployment: None,
                 });
         }
 
@@ -729,6 +753,8 @@ impl Config {
                     name: None,
                     use_bearer_auth: false,
                     extra_headers: vec![],
+                    api_version: None,
+                    deployment: None,
                 });
         }
 
@@ -742,6 +768,8 @@ impl Config {
                     name: None,
                     use_bearer_auth: false,
                     extra_headers: vec![],
+                    api_version: None,
+                    deployment: None,
                 });
         }
 
@@ -755,6 +783,8 @@ impl Config {
                     name: None,
                     use_bearer_auth: false,
                     extra_headers: vec![],
+                    api_version: None,
+                    deployment: None,
                 });
         }
 
@@ -768,6 +798,8 @@ impl Config {
                     name: None,
                     use_bearer_auth: false,
                     extra_headers: vec![],
+                    api_version: None,
+                    deployment: None,
                 });
         }
 
@@ -781,6 +813,8 @@ impl Config {
                     name: None,
                     use_bearer_auth: false,
                     extra_headers: vec![],
+                    api_version: None,
+                    deployment: None,
                 });
         }
 
@@ -794,6 +828,8 @@ impl Config {
                     name: None,
                     use_bearer_auth: false,
                     extra_headers: vec![],
+                    api_version: None,
+                    deployment: None,
                 });
         }
 
@@ -807,6 +843,8 @@ impl Config {
                     name: None,
                     use_bearer_auth: false,
                     extra_headers: vec![],
+                    api_version: None,
+                    deployment: None,
                 });
         }
 
@@ -823,6 +861,8 @@ impl Config {
                     name: None,
                     use_bearer_auth: false,
                     extra_headers: vec![],
+                    api_version: None,
+                    deployment: None,
                 });
         }
 
@@ -1150,6 +1190,8 @@ impl Config {
                             name: config.name,
                             use_bearer_auth: false,
                             extra_headers,
+                            api_version: config.api_version,
+                            deployment: config.deployment,
                         },
                     ))
                 })
@@ -1176,6 +1218,8 @@ impl Config {
                     name: None,
                     use_bearer_auth: anthropic_from_auth_token,
                     extra_headers: vec![],
+                    api_version: None,
+                    deployment: None,
                 });
         }
 
@@ -1189,6 +1233,8 @@ impl Config {
                     name: None,
                     use_bearer_auth: false,
                     extra_headers: vec![],
+                    api_version: None,
+                    deployment: None,
                 });
         }
 
@@ -1202,6 +1248,8 @@ impl Config {
                     name: None,
                     use_bearer_auth: false,
                     extra_headers: openrouter_extra_headers(),
+                    api_version: None,
+                    deployment: None,
                 });
         }
 
@@ -1273,6 +1321,8 @@ impl Config {
                     name: None,
                     use_bearer_auth: false,
                     extra_headers: vec![],
+                    api_version: None,
+                    deployment: None,
                 });
         }
 
@@ -1286,6 +1336,8 @@ impl Config {
                     name: None,
                     use_bearer_auth: false,
                     extra_headers: vec![],
+                    api_version: None,
+                    deployment: None,
                 });
         }
 
@@ -1299,6 +1351,8 @@ impl Config {
                     name: None,
                     use_bearer_auth: false,
                     extra_headers: vec![],
+                    api_version: None,
+                    deployment: None,
                 });
         }
 
@@ -1312,6 +1366,8 @@ impl Config {
                     name: None,
                     use_bearer_auth: false,
                     extra_headers: vec![],
+                    api_version: None,
+                    deployment: None,
                 });
         }
 
@@ -1325,6 +1381,8 @@ impl Config {
                     name: None,
                     use_bearer_auth: false,
                     extra_headers: vec![],
+                    api_version: None,
+                    deployment: None,
                 });
         }
 
@@ -1338,6 +1396,8 @@ impl Config {
                     name: None,
                     use_bearer_auth: false,
                     extra_headers: vec![],
+                    api_version: None,
+                    deployment: None,
                 });
         }
 
@@ -1351,6 +1411,8 @@ impl Config {
                     name: None,
                     use_bearer_auth: false,
                     extra_headers: vec![],
+                    api_version: None,
+                    deployment: None,
                 });
         }
 
@@ -1364,6 +1426,8 @@ impl Config {
                     name: None,
                     use_bearer_auth: false,
                     extra_headers: vec![],
+                    api_version: None,
+                    deployment: None,
                 });
         }
 
@@ -1377,6 +1441,8 @@ impl Config {
                     name: None,
                     use_bearer_auth: false,
                     extra_headers: vec![],
+                    api_version: None,
+                    deployment: None,
                 });
         }
 
@@ -1390,6 +1456,8 @@ impl Config {
                     name: None,
                     use_bearer_auth: false,
                     extra_headers: vec![],
+                    api_version: None,
+                    deployment: None,
                 });
         }
 
@@ -1403,6 +1471,8 @@ impl Config {
                     name: None,
                     use_bearer_auth: false,
                     extra_headers: vec![],
+                    api_version: None,
+                    deployment: None,
                 });
         }
 
@@ -1419,6 +1489,8 @@ impl Config {
                     name: None,
                     use_bearer_auth: false,
                     extra_headers: vec![],
+                    api_version: None,
+                    deployment: None,
                 });
         }
 
