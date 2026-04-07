@@ -33,6 +33,7 @@ pub mod tasks;
 pub mod telemetry;
 pub mod tools;
 pub mod update;
+pub mod wiki;
 
 pub use error::{Error, Result};
 
@@ -422,6 +423,8 @@ pub struct AgentDeps {
     pub working_memory: Arc<memory::WorkingMemoryStore>,
     /// Optional API state for tools that need to emit notifications/SSE events.
     pub api_state: Option<Arc<api::ApiState>>,
+    /// Instance-wide wiki store.
+    pub wiki_store: Option<Arc<wiki::WikiStore>>,
 }
 
 impl AgentDeps {

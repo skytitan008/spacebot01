@@ -63,6 +63,12 @@ pub mod task_create;
 pub mod task_list;
 pub mod task_update;
 pub mod web_search;
+pub mod wiki_create;
+pub mod wiki_edit;
+pub mod wiki_history;
+pub mod wiki_list;
+pub mod wiki_read;
+pub mod wiki_search;
 pub mod worker_inspect;
 
 pub mod factory_create_agent;
@@ -145,6 +151,12 @@ pub use spawn_worker::{
 pub use task_create::{TaskCreateArgs, TaskCreateError, TaskCreateOutput, TaskCreateTool};
 pub use task_list::{TaskListArgs, TaskListError, TaskListOutput, TaskListTool};
 pub use task_update::{TaskUpdateArgs, TaskUpdateError, TaskUpdateOutput, TaskUpdateTool};
+pub use wiki_create::{WikiCreateArgs, WikiCreateError, WikiCreateOutput, WikiCreateTool};
+pub use wiki_edit::{WikiEditArgs, WikiEditError, WikiEditOutput, WikiEditTool};
+pub use wiki_history::{WikiHistoryArgs, WikiHistoryError, WikiHistoryOutput, WikiHistoryTool};
+pub use wiki_list::{WikiListArgs, WikiListError, WikiListOutput, WikiListTool};
+pub use wiki_read::{WikiReadArgs, WikiReadError, WikiReadOutput, WikiReadTool};
+pub use wiki_search::{WikiSearchArgs, WikiSearchError, WikiSearchOutput, WikiSearchTool};
 pub use web_search::{SearchResult, WebSearchArgs, WebSearchError, WebSearchOutput, WebSearchTool};
 pub use worker_inspect::{
     WorkerInspectArgs, WorkerInspectError, WorkerInspectOutput, WorkerInspectTool,
@@ -595,6 +607,8 @@ pub fn create_branch_tool_server(
     run_logger: crate::conversation::history::ProcessRunLogger,
     profile: BranchToolProfile,
     api_state: Option<Arc<crate::api::ApiState>>,
+    wiki_store: Option<Arc<crate::wiki::WikiStore>>,
+    sandbox: Arc<crate::sandbox::Sandbox>,
 ) -> ToolServerHandle {
     let mut memory_save = memory_save_with_events(
         memory_search.clone(),
@@ -621,11 +635,23 @@ pub fn create_branch_tool_server(
         .tool(MemoryDeleteTool::new(memory_search))
         .tool(ChannelRecallTool::new(conversation_logger, channel_store))
         .tool(SpacebotDocsTool::new())
-        .tool(EmailSearchTool::new(runtime_config))
+        .tool(EmailSearchTool::new(runtime_config.clone()))
         .tool(WorkerInspectTool::new(run_logger, agent_id.to_string()))
         .tool(task_create)
         .tool(TaskListTool::new(task_store.clone(), agent_id.to_string()))
-        .tool(TaskUpdateTool::for_branch(task_store, agent_id.clone()));
+        .tool(TaskUpdateTool::for_branch(task_store, agent_id.clone()))
+        .tool(FileReadTool::new(runtime_config.workspace_dir.clone(), sandbox));
+
+    if let Some(wiki) = wiki_store {
+        let author_id = agent_id.to_string();
+        server = server
+            .tool(WikiCreateTool::new(wiki.clone(), "agent", author_id.clone()))
+            .tool(WikiEditTool::new(wiki.clone(), "agent", author_id.clone()))
+            .tool(WikiReadTool::new(wiki.clone()))
+            .tool(WikiListTool::new(wiki.clone()))
+            .tool(WikiSearchTool::new(wiki.clone()))
+            .tool(WikiHistoryTool::new(wiki));
+    }
 
     if let BranchToolProfile::MemoryPersistence {
         contract_state,

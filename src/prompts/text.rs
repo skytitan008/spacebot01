@@ -214,6 +214,24 @@ fn lookup(lang: &str, key: &str) -> &'static str {
         ("en", "tools/send_agent_message") => {
             include_str!("../../prompts/en/tools/send_agent_message_description.md.j2")
         }
+        ("en", "tools/wiki_create") => {
+            include_str!("../../prompts/en/tools/wiki_create_description.md.j2")
+        }
+        ("en", "tools/wiki_edit") => {
+            include_str!("../../prompts/en/tools/wiki_edit_description.md.j2")
+        }
+        ("en", "tools/wiki_read") => {
+            include_str!("../../prompts/en/tools/wiki_read_description.md.j2")
+        }
+        ("en", "tools/wiki_list") => {
+            include_str!("../../prompts/en/tools/wiki_list_description.md.j2")
+        }
+        ("en", "tools/wiki_search") => {
+            include_str!("../../prompts/en/tools/wiki_search_description.md.j2")
+        }
+        ("en", "tools/wiki_history") => {
+            include_str!("../../prompts/en/tools/wiki_history_description.md.j2")
+        }
         ("en", "tools/task_create") => {
             include_str!("../../prompts/en/tools/task_create_description.md.j2")
         }

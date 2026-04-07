@@ -2470,6 +2470,66 @@ export const api = {
 
 	getEventsUrl: () => `${getApiBase()}/events`,
 
+	// Wiki API
+	listWikiPages: (params?: { page_type?: string }) => {
+		const qs = new URLSearchParams();
+		if (params?.page_type) qs.set("page_type", params.page_type);
+		const query = qs.toString();
+		return fetchJson<WikiListResponse>(`/wiki${query ? `?${query}` : ""}`);
+	},
+
+	searchWikiPages: (params: { query: string; page_type?: string }) => {
+		const qs = new URLSearchParams({ query: params.query });
+		if (params.page_type) qs.set("page_type", params.page_type);
+		return fetchJson<WikiListResponse>(`/wiki/search?${qs}`);
+	},
+
+	getWikiPage: (slug: string, version?: number) => {
+		const qs = version !== undefined ? `?version=${version}` : "";
+		return fetchJson<WikiPageResponse>(`/wiki/${encodeURIComponent(slug)}${qs}`);
+	},
+
+	createWikiPage: async (request: CreateWikiPageRequest): Promise<WikiPageResponse> => {
+		const response = await fetch(`${getApiBase()}/wiki`, {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify(request),
+		});
+		if (!response.ok) throw new Error(`API error: ${response.status}`);
+		return response.json() as Promise<WikiPageResponse>;
+	},
+
+	editWikiPage: async (slug: string, request: EditWikiPageRequest): Promise<WikiPageResponse> => {
+		const response = await fetch(`${getApiBase()}/wiki/${encodeURIComponent(slug)}/edit`, {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify(request),
+		});
+		if (!response.ok) throw new Error(`API error: ${response.status}`);
+		return response.json() as Promise<WikiPageResponse>;
+	},
+
+	getWikiHistory: (slug: string, limit = 20) =>
+		fetchJson<WikiHistoryResponse>(`/wiki/${encodeURIComponent(slug)}/history?limit=${limit}`),
+
+	restoreWikiVersion: async (slug: string, version: number): Promise<WikiPageResponse> => {
+		const response = await fetch(`${getApiBase()}/wiki/${encodeURIComponent(slug)}/restore`, {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({ version }),
+		});
+		if (!response.ok) throw new Error(`API error: ${response.status}`);
+		return response.json() as Promise<WikiPageResponse>;
+	},
+
+	archiveWikiPage: async (slug: string): Promise<{ success: boolean; message: string }> => {
+		const response = await fetch(`${getApiBase()}/wiki/${encodeURIComponent(slug)}`, {
+			method: "DELETE",
+		});
+		if (!response.ok) throw new Error(`API error: ${response.status}`);
+		return response.json();
+	},
+
 	usage: (params?: { agent_id?: string; since?: string; until?: string; group_by?: string }) => {
 		const qs = new URLSearchParams();
 		if (params?.agent_id) qs.set("agent_id", params.agent_id);
@@ -2509,3 +2569,74 @@ export interface UsageResponse {
 	by_day?: Array<{ date: string } & UsageTotals>;
 	by_agent?: Array<{ agent_id: string } & UsageTotals>;
 };
+
+// Wiki types
+export type WikiPageType = "entity" | "concept" | "decision" | "project" | "reference";
+
+export interface WikiPageSummary {
+	id: string;
+	slug: string;
+	title: string;
+	page_type: string;
+	version: number;
+	updated_at: string;
+	updated_by: string;
+}
+
+export interface WikiPage {
+	id: string;
+	slug: string;
+	title: string;
+	page_type: string;
+	content: string;
+	related: string[];
+	created_by: string;
+	updated_by: string;
+	version: number;
+	archived: boolean;
+	created_at: string;
+	updated_at: string;
+}
+
+export interface WikiPageVersion {
+	id: string;
+	page_id: string;
+	version: number;
+	content: string;
+	edit_summary: string | null;
+	author_type: string;
+	author_id: string;
+	created_at: string;
+}
+
+export interface WikiListResponse {
+	pages: WikiPageSummary[];
+	total: number;
+}
+
+export interface WikiPageResponse {
+	page: WikiPage;
+}
+
+export interface WikiHistoryResponse {
+	versions: WikiPageVersion[];
+}
+
+export interface CreateWikiPageRequest {
+	title: string;
+	page_type: WikiPageType;
+	content: string;
+	related?: string[];
+	edit_summary?: string;
+	author_id?: string;
+	author_type?: string;
+}
+
+export interface EditWikiPageRequest {
+	old_string: string;
+	new_string: string;
+	replace_all?: boolean;
+	edit_summary?: string;
+	author_id?: string;
+	author_type?: string;
+}

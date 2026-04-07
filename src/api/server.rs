@@ -4,7 +4,7 @@ use super::state::ApiState;
 use super::{
     agents, attachments, bindings, channels, config, cortex, cron, factory, ingest, links, mcp,
     memories, messaging, models, notifications, opencode_proxy, portal, projects, providers,
-    secrets, settings, skills, ssh, system, tasks, tools, usage, workers,
+    secrets, settings, skills, ssh, system, tasks, tools, usage, wiki, workers,
 };
 
 use axum::Json;
@@ -141,6 +141,13 @@ pub fn api_router() -> OpenApiRouter<Arc<ApiState>> {
         .routes(routes!(tasks::approve_task))
         .routes(routes!(tasks::execute_task))
         .routes(routes!(tasks::assign_task))
+        // Wiki routes
+        .routes(routes!(wiki::list_pages, wiki::create_page))
+        .routes(routes!(wiki::search_pages))
+        .routes(routes!(wiki::get_page, wiki::archive_page))
+        .routes(routes!(wiki::edit_page))
+        .routes(routes!(wiki::get_history))
+        .routes(routes!(wiki::restore_version))
         // Project routes
         .routes(routes!(projects::list_projects, projects::create_project))
         .routes(routes!(

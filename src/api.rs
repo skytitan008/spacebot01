@@ -33,6 +33,7 @@ mod system;
 mod tasks;
 mod tools;
 mod usage;
+mod wiki;
 mod workers;
 
 pub use server::{api_router, start_http_server};

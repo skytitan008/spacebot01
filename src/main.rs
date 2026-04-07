@@ -1628,6 +1628,9 @@ async fn run(
 
     let global_task_store = Arc::new(spacebot::tasks::TaskStore::new(instance_pool.clone()));
 
+    // Instance-wide wiki knowledge base.
+    let global_wiki_store = Arc::new(spacebot::wiki::WikiStore::new(instance_pool.clone()));
+
     // Instance-level notification store for the dashboard inbox.
     let global_notification_store = Arc::new(spacebot::notifications::NotificationStore::new(
         instance_pool.clone(),
@@ -1651,6 +1654,7 @@ async fn run(
     );
     api_state.auth_token = config.api.auth_token.clone();
     api_state.set_task_store(global_task_store.clone());
+    api_state.set_wiki_store(global_wiki_store.clone());
     api_state.set_notification_store(global_notification_store.clone());
     let api_state = Arc::new(api_state);
 
@@ -1818,6 +1822,7 @@ async fn run(
             agent_humans.clone(),
             injection_tx.clone(),
             global_task_store.clone(),
+            global_wiki_store.clone(),
             global_project_store.clone(),
             global_notification_store.clone(),
             &bootstrapped_store,
@@ -2602,6 +2607,7 @@ async fn run(
                                     agent_humans.clone(),
                                     injection_tx.clone(),
                                     global_task_store.clone(),
+                                    global_wiki_store.clone(),
                                     global_project_store.clone(),
                                     global_notification_store.clone(),
                                     &bootstrapped_store,
@@ -2747,6 +2753,7 @@ async fn initialize_agents(
     agent_humans: Arc<ArcSwap<Vec<spacebot::config::HumanDef>>>,
     injection_tx: tokio::sync::mpsc::Sender<spacebot::ChannelInjection>,
     global_task_store: Arc<spacebot::tasks::TaskStore>,
+    global_wiki_store: Arc<spacebot::wiki::WikiStore>,
     global_project_store: Arc<spacebot::projects::ProjectStore>,
     global_notification_store: Arc<spacebot::notifications::NotificationStore>,
     bootstrapped_store: &Option<Arc<spacebot::secrets::store::SecretsStore>>,
@@ -2996,6 +3003,7 @@ async fn initialize_agents(
             injection_tx: injection_tx.clone(),
             working_memory,
             api_state: Some(api_state.clone()),
+            wiki_store: Some(global_wiki_store.clone()),
         };
 
         let agent = spacebot::Agent {

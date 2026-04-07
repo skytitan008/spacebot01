@@ -1,7 +1,7 @@
-import {useState, useMemo} from "react";
+import {useState, useMemo, useCallback} from "react";
 import {useQuery} from "@tanstack/react-query";
 import {useQueries} from "@tanstack/react-query";
-import {Queue, MagnifyingGlass, CaretLeft} from "@phosphor-icons/react";
+import {Queue, MagnifyingGlass, CaretLeft, Copy, Check} from "@phosphor-icons/react";
 import {
 	CircleButton,
 	PopoverRoot,
@@ -377,16 +377,53 @@ function WorkerDetailInline({
 		};
 	}, [detailData, liveWorker]);
 
+	const [copied, setCopied] = useState(false);
+
+	const copyTranscript = useCallback(() => {
+		const steps = liveTranscript ?? detail?.transcript;
+		if (!steps || steps.length === 0) return;
+
+		const lines: string[] = [];
+		if (detail?.task) lines.push(`# ${detail.task}\n`);
+		for (const step of steps) {
+			if (step.type === "user_text" || step.type === "system_text") {
+				lines.push(step.text);
+			} else if (step.type === "tool_result") {
+				lines.push(`[${step.name}] ${step.text}`);
+			} else if (step.type === "action") {
+				for (const c of step.content) {
+					if (c.type === "text") lines.push(c.text);
+					else if (c.type === "tool_call") lines.push(`> ${c.name}(${c.args})`);
+				}
+			}
+		}
+		if (detail?.result) lines.push(`\n---\nResult: ${detail.result}`);
+
+		navigator.clipboard.writeText(lines.join("\n")).then(() => {
+			setCopied(true);
+			setTimeout(() => setCopied(false), 2000);
+		});
+	}, [detail, liveTranscript]);
+
 	return (
 		<>
 			{/* Back bar */}
-			<button
-				onClick={onBack}
-				className="flex items-center gap-1.5 border-b border-app-line px-3 py-2 text-xs font-medium text-ink-dull transition-colors hover:text-ink"
-			>
-				<CaretLeft className="h-3.5 w-3.5" />
-				Workers
-			</button>
+			<div className="flex items-center border-b border-app-line">
+				<button
+					onClick={onBack}
+					className="flex flex-1 items-center gap-1.5 px-3 py-2 text-xs font-medium text-ink-dull transition-colors hover:text-ink"
+				>
+					<CaretLeft className="h-3.5 w-3.5" />
+					Workers
+				</button>
+				<CircleButton
+					icon={copied ? Check : Copy}
+					title="Copy transcript"
+					onClick={copyTranscript}
+					variant="default"
+				/>
+				<div className="w-2" />
+			</div>
 
 			{!detail ? (
 				<div className="flex flex-1 items-center justify-center">

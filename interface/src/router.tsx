@@ -23,6 +23,7 @@ import {AgentWorkers} from "@/routes/AgentWorkers";
 import {AgentProjects} from "@/routes/AgentProjects";
 import {AgentTasks} from "@/routes/AgentTasks";
 import {GlobalTasks} from "@/routes/GlobalTasks";
+import {Wiki} from "@/routes/Wiki";
 import {AgentChat} from "@/routes/AgentChat";
 import {Settings} from "@/routes/Settings";
 import {Workbench} from "@/routes/Workbench";
@@ -113,6 +114,14 @@ const tasksRoute = createRoute({
 	path: "/tasks",
 	component: function TasksPage() {
 		return <GlobalTasks />;
+	},
+});
+
+const wikiRoute = createRoute({
+	getParentRoute: () => rootRoute,
+	path: "/wiki",
+	component: function WikiPage() {
+		return <Wiki />;
 	},
 });
 
@@ -259,6 +268,7 @@ const routeTree = rootRoute.addChildren([
 	logsRoute,
 	workbenchRoute,
 	tasksRoute,
+	wikiRoute,
 	agentRoute,
 	agentChatRoute,
 	agentChannelsRoute,

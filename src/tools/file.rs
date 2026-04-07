@@ -171,7 +171,15 @@ pub struct FileEntryOutput {
 
 #[derive(Debug, Clone)]
 pub struct FileReadTool {
-    context: FileContext,
+    pub(crate) context: FileContext,
+}
+
+impl FileReadTool {
+    pub fn new(workspace: std::path::PathBuf, sandbox: Arc<crate::sandbox::Sandbox>) -> Self {
+        Self {
+            context: FileContext::new(workspace, sandbox),
+        }
+    }
 }
 
 /// Arguments for file_read.
